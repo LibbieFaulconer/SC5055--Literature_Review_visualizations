@@ -186,7 +186,7 @@ ggplot() +
   # Red points for existing coral spawning studies
   geom_point(data = data_coords_clean, 
              aes(x = longitude, y = latitude, color = "Coral Spawning Studies from Current Databases"),
-             size = 2) +
+             size = 3.5) +
   
   # Large blue shaded ovals for under-monitored regions (with legend label)
   geom_ellipse(data = gap_regions,
