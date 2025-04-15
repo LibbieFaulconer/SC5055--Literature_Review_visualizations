@@ -141,4 +141,78 @@ ggplot() +
     x = "Longitude", y = "Latitude"
   )
 ```
+# Now we are going to add shaded areas that need more spawning data collection and attention 
+
+
+```{r}
+# Load required libraries
+library(maps)       # For the world base map
+library(ggplot2)    # For plotting
+library(ggforce)    # For drawing ellipses
+library(tibble)     # For tibble data format
+
+# Load world map data
+world_map <- map_data("world")
+
+# Define underrepresented regions as large blue ellipses
+gap_regions <- tibble::tibble(
+  region = c(
+    "Northern Indian Ocean", 
+    "East Africa", 
+    "Southeast Indian Ocean",
+    "Central Pacific", 
+    "High Latitude N. Pacific", 
+    "Tropical Atlantic",
+    "West Pacific", 
+    "Caribbean", 
+    "Southeast Asia"
+  ),
+  x0 = c(65, 45, 110, -170, 135, -38, 155, -75, 128),  # center longitudes
+  y0 = c(10, -15, -12, 4, 30, -17, -10, 18, 5),        # center latitudes
+  a = c(12, 10, 8, 15, 8, 6, 7, 15, 18),               # horizontal radii (width)
+  b = c(6, 16, 6, 6, 4, 5, 5, 7, 12),                  # vertical radii (height)
+  angle = 0                                            # no rotation
+)
+
+# Create the map
+ggplot() +
+  # Base world map polygons
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group),
+               fill = "gray95", color = "gray70") +
+  
+  # Red points for existing coral spawning studies
+  geom_point(data = data_coords_clean, 
+             aes(x = longitude, y = latitude, color = "Coral Spawning Studies from Current Databases"),
+             size = 2) +
+  
+  # Large blue shaded ovals for under-monitored regions (with legend label)
+  geom_ellipse(data = gap_regions,
+               aes(x0 = x0, y0 = y0, a = a, b = b, angle = angle, fill = "Monitoring Gap"),
+               alpha = 0.2, color = NA) +
+  
+  # Add legend entries for red and blue features
+  scale_color_manual(name = NULL, values = "red") +
+  scale_fill_manual(name = NULL, values = c("Monitoring Gap" = "blue")) +
+  
+  # Keep map proportions clean
+  coord_fixed(1.3) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  
+  # Title and axis labels
+  labs(
+    title = "Coral Spawning Study Locations & Monitoring Gaps",
+    x = "Longitude",
+    y = "Latitude"
+  )
+
+
+```
+
+
+
+
+
+
+
 
