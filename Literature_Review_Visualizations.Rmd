@@ -101,6 +101,44 @@ ggplot() +
 
 ```
 
+# NEED TO FIX INLAND POINT IN WA
 
+```{r}
+# View all geocoded coordinates
+View(data_coords_clean)
 
+```
+
+```{r}
+data_coords_clean %>%
+  filter(longitude > 110, longitude < 125, latitude < -15, latitude > -35)
+# isolating WA point
+```
+
+```{r}
+data_coords_clean$latitude[which(data_coords_clean$Location == "Western Australia")] <- -22.0
+data_coords_clean$longitude[which(data_coords_clean$Location == "Western Australia")] <- 113.9
+
+```
+
+```{r}
+library(maps)
+
+world_map <- map_data("world")
+
+ggplot() +
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group),
+               fill = "gray95", color = "gray70") +
+  geom_point(data = data_coords_clean, 
+             aes(x = longitude, y = latitude, color = "Coral Spawning Studies from Current Databases"), 
+             size = 2) +
+  scale_color_manual(name = NULL, values = "red") +
+  coord_fixed(1.3) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +  # <- Move legend to the bottom
+  labs(
+    title = "Mapped Coral Spawning Study Locations",
+    x = "Longitude", y = "Latitude"
+  )
+```
 
