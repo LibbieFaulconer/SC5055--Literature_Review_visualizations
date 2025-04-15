@@ -141,6 +141,9 @@ ggplot() +
     x = "Longitude", y = "Latitude"
   )
 ```
+
+
+
 # Now we are going to add shaded areas that need more spawning data collection and attention 
 
 
@@ -210,7 +213,36 @@ ggplot() +
 ```
 
 
+# Now I will make my Environmental Spawning Cue Chart
 
+```{r}
+# Load required packages
+library(tidyverse)
+
+# Create a data frame of cue counts
+cue_data <- tibble(
+  Cue = c("Lunar Phase", "SST (Temp)", "Photoperiod / Light", "Rainfall", 
+          "Tidal Cycles", "Salinity", "Wind", "Molecular"),
+  Count = c(35, 30, 12, 5, 7, 3, 6, 4)
+)
+
+```
+
+```{r}
+# Plot cue coverage
+ggplot(cue_data, aes(x = reorder(Cue, Count), y = Count)) +
+  geom_col(fill = "mediumseagreen", width = 0.7) +
+  coord_flip() +
+  theme_minimal(base_size = 11) +
+  labs(
+    title = "Environmental Cues Reported in Current Databases",
+    x = "Environmental Cue",
+    y = "Number of Studies"
+  ) +
+  geom_text(aes(label = Count), hjust = -0.2) +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5))
+
+```
 
 
 
