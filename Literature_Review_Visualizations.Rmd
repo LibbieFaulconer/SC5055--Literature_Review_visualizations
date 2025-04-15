@@ -244,6 +244,141 @@ ggplot(cue_data, aes(x = reorder(Cue, Count), y = Count)) +
 
 ```
 
+# Now I am going to make a pie chart showcasing the species studied in my lit review
+
+```{r}
+library(tidyverse)
+
+# Final pie chart data
+taxonomic_data <- tibble(
+  Taxa = c(
+    "Acropora spp.", 
+    "Porites spp.", 
+    "Faviidae", 
+    "Multiple or other brooding spp."
+  ),
+  Count = c(22, 6, 4, 12)
+) %>%
+  mutate(Percent = Count / sum(Count) * 100,
+         Label = paste0(Taxa, " (", round(Percent), "%)"))
+
+# Create the pie chart
+ggplot(taxonomic_data, aes(x = "", y = Count, fill = Taxa)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  theme_void() +
+  labs(title = "Taxonomic Focus of Reviewed Coral Spawning Studies") +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.title = element_blank()
+  ) +
+  geom_text(
+    aes(label = paste0(round(Percent), "%")),
+    position = position_stack(vjust = 0.5),
+    color = "black",
+    size = 5
+  )
+
+```
+# Now I am going to make a Temporal Coverage Of Coral Spawning Studied in my Lit review
+
+```{r}
+
+
+# Create a dataset
+temporal_data <- tibble(
+  StudyDuration = c("One-time Observation", "Short-term (≤ 2 years)", "Long-term (> 2 years)"),
+  Count = c(18, 17, 9)
+) %>%
+  mutate(Percent = Count / sum(Count) * 100)
+
+# Convert to factor to control bar order (optional)
+temporal_data$StudyDuration <- factor(temporal_data$StudyDuration, 
+                                      levels = c("One-time Observation", 
+                                                 "Short-term (≤ 2 years)", 
+                                                 "Long-term (> 2 years)"))
+
+# Plot 100% stacked bar chart
+ggplot(temporal_data, aes(x = "", y = Percent, fill = StudyDuration)) +
+  geom_bar(stat = "identity", width = 0.6, color = "white") +
+  coord_flip() +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Temporal Resolution of Coral Spawning Studies",
+    y = "Proportion of Studies (%)",
+    x = NULL,
+    fill = "Study Duration"
+  ) +
+  geom_text(aes(label = paste0(round(Percent), "%")),
+            position = position_stack(vjust = 0.5),
+            size = 5, color = "black") +
+  scale_fill_brewer(palette = "Blues")
+
+```
+# trying a waffle chart for fun
+```{r}
+# Install the waffle package if needed
+#install.packages("waffle")
+library(waffle)
+library(ggplot2)
+
+# Create named vector of study durations
+temporal_data <- c(
+  `One-time Observation` = 18,
+  `Short-term (≤ 2 years)` = 17,
+  `Long-term (> 2 years)` = 9
+)
+
+# Plot the waffle chart
+waffle(
+  parts = temporal_data,
+  rows = 5,  # 5 rows of boxes → 44 total boxes
+  size = 1,
+  colors = c("#4B9CD3", "#74C476", "#FDD835"),
+  title = "Temporal Resolution of Coral Spawning Studies",
+  legend_pos = "bottom"
+)
+
+```
+
+# trying a horizontal bar chart
+
+```{r}
+#library(tidyverse)
+
+# Data
+temporal_data <- tibble(
+  Duration = c("One-time Observation", "Short-term (≤ 2 years)", "Long-term (> 2 years)"),
+  Count = c(18, 17, 9)
+) %>%
+  mutate(Percent = Count / sum(Count) * 100,
+         Label = paste0(Duration, "\n", round(Percent), "%"))
+
+# Reorder for stacking
+temporal_data$Duration <- factor(temporal_data$Duration,
+                                  levels = c("Long-term (> 2 years)", "Short-term (≤ 2 years)", "One-time Observation"))
+
+# Final plot
+ggplot(temporal_data, aes(x = "", y = Percent, fill = Duration)) +
+  geom_bar(stat = "identity", width = 0.6, color = "white") +
+  coord_flip() +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5), size = 4.5) +
+  theme_void() +
+  scale_fill_manual(values = c("#FDD835", "#74C476", "#4B9CD3")) +
+  labs(title = "Temporal Resolution of Coral Spawning Studies") +
+  theme(
+    plot.title = element_text(
+      hjust = 0.5,
+      size = 14,
+      face = "bold",
+      margin = margin(b = 2)  # minimal space below title
+    ),
+    plot.margin = margin(t = 5, r = 10, b = 10, l = 10),  # tighter top margin
+    legend.position = "none"
+  )
+
+
+```
 
 
 
